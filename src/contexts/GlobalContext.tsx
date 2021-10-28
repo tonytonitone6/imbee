@@ -12,6 +12,7 @@ import {
 import { CardInfoType } from '@components/QuestionList/QuestionList';
 
 export enum ActionsType {
+  SET_SEARCH_WORDS = 'SET_SEARCH_WORDS',
   SET_SELECTED_TAG = 'SET_SELECTED_TAG',
   SET_LOADING = 'SET_LOADING',
   SET_TAG_LIST = 'SET_TAG_LIST',
@@ -35,6 +36,7 @@ type StatusType<T> = {
 
 type IContextType = {
   state: {
+    searchWords: string;
     selectedTag: string;
     tags: StatusType<TagType>;
     questions: StatusType<any>;
@@ -43,6 +45,7 @@ type IContextType = {
 };
 
 type IStateType = {
+  searchWords: string;
   selectedTag: string;
   tags: StatusType<TagType> | any;
   questions: StatusType<any>;
@@ -105,7 +108,11 @@ export const reducer: Reducer<any, IActionType> = (state, action) => {
         ...state,
         selectedTag: action.payload
       };
-
+    case ActionsType.SET_SEARCH_WORDS:
+      return {
+        ...state,
+        searchWords: action.payload
+      };
     default:
       return state;
   }
@@ -118,6 +125,7 @@ type ContextType = {
 };
 
 const initState = {
+  searchWords: '',
   selectedTag: '',
   tags: {
     page: 1,
@@ -211,6 +219,9 @@ const updateQuestionListByPage = (
 const fetchMoreData = (dispatch: Dispatch<any>) =>
   dispatch({ type: ActionsType.GET_MORE_QUESTION });
 
+const updateSearchWords = (dispatch: Dispatch<any>, text: string) =>
+  dispatch({ type: ActionsType.SET_SEARCH_WORDS, payload: text });
+
 export {
   useStore,
   updateLoadingStatus,
@@ -218,5 +229,6 @@ export {
   updateSelectTag,
   updateQuestionListByTag,
   updateQuestionListByPage,
+  updateSearchWords,
   fetchMoreData
 };

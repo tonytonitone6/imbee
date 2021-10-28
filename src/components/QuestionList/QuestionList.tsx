@@ -1,7 +1,9 @@
 import { FC } from 'react';
 import Card from '@components/Card/Card';
-
 import { useStore } from '@contexts/GlobalContext';
+
+import { QuestionWrap } from './Question.style';
+
 export type OwnerType = {
   profile_image: string;
   display_name: string;
@@ -23,11 +25,11 @@ const QuestionList: FC = () => {
     questions: { data: questionList = [] }
   } = state;
   return (
-    <>
+    <QuestionWrap>
       {questionList.map((question) => {
         return <Card key={question.title} {...question} />;
       })}
-    </>
+    </QuestionWrap>
   );
 };
 

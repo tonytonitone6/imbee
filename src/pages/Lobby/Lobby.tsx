@@ -1,5 +1,4 @@
-import { FC, Fragment, useState, useEffect } from 'react';
-import debounce from 'lodash.debounce';
+import { FC, Fragment, useEffect } from 'react';
 
 import useIntersectionObserver from '@hooks/useIntersectionObserver';
 import { GETv1Tags, GETv1Questions } from '@utils/apis';
@@ -15,6 +14,7 @@ import {
 import SearchBar from '@components/SearchBar/SearchBar';
 import TradingTag from '@components/TrendingTag/TradingTag';
 import QuestionList from '@components/QuestionList/QuestionList';
+import Spinner from '@components/Spinner/Spinner';
 import {
   SearchBarSection,
   TradingTagSection,
@@ -37,8 +37,7 @@ const options = {
 const Lobby: FC = () => {
   const [ref, isInView] = useIntersectionObserver(options);
   const { state, dispatch } = useStore();
-  const [searchWords, setSearchWords] = useState<string>('');
-  const { selectedTag, questions, tags } = state;
+  const { selectedTag, questions, tags, searchWords } = state;
 
   const getQuestions = async (func: Function) => {
     const { page, pageSize } = questions;
@@ -63,7 +62,7 @@ const Lobby: FC = () => {
     } catch (error) {}
   };
 
-  // init tags
+  // load tags, when search words was changed.
   useEffect(() => {
     const getTags = async () => {
       const { page, pageSize } = tags;
@@ -75,6 +74,7 @@ const Lobby: FC = () => {
           pageSize,
           text: searchWords
         });
+
         const { data: { items: tagList } = [], status } = res;
 
         if (status === 200) {
@@ -86,12 +86,14 @@ const Lobby: FC = () => {
     getTags();
   }, [searchWords]);
 
+  // load question, when tag was changes.
   useEffect(() => {
     if (selectedTag) {
       getQuestions(updateQuestionListByTag);
     }
   }, [selectedTag]);
 
+  // load questions, when page was changed.
   useEffect(() => {
     getQuestions(updateQuestionListByPage);
   }, [questions.page]);
@@ -105,17 +107,10 @@ const Lobby: FC = () => {
     }
   }, [isInView]);
 
-  // it will avoid high frequency to call api
-  const updateSearchWords = debounce((text: string) => {
-    setSearchWords(text);
-  }, DELAY_SECONDS);
-
-  console.log(state, 'state');
-
   return (
     <Fragment>
       <SearchBarSection>
-        <SearchBar onUpdateSearchWords={updateSearchWords} />
+        <SearchBar />
       </SearchBarSection>
       <TradingTagSection>
         <TradingTag />
@@ -123,7 +118,9 @@ const Lobby: FC = () => {
       <QuestionSection>
         <QuestionList />
       </QuestionSection>
-      <FooterSection ref={ref} />
+      <FooterSection ref={ref}>
+        {questions.isLoading ? <Spinner /> : null}
+      </FooterSection>
     </Fragment>
   );
 };

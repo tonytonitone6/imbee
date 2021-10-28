@@ -15,6 +15,8 @@ export const QuestionSection = styled('section')`
 `;
 
 export const FooterSection = styled('footer')`
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: 100px;
 `;

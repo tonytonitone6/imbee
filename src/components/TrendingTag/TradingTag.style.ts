@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
 
-export const TradingTagWrap = styled('div')`
+type TradingTagType = {
+  fixed: boolean;
+};
+
+export const TradingTagWrap = styled('div')<TradingTagType>`
+  position: ${(props) => (props.fixed ? 'relative' : 'fixed')};
+  top: ${(props) => (props.fixed ? 0 : '50px')};
   display: flex;
   flex-flow: row wrap;
   align-items: center;

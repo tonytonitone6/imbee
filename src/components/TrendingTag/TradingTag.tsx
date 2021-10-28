@@ -7,7 +7,11 @@ import { TradingTagWrap, TagWrap } from './TradingTag.style';
 
 const TradingTag: FC = () => {
   const { state, dispatch } = useStore();
-  const { tags: { data: tagList = [], isLoading } = {}, selectedTag } = state;
+  const {
+    tags: { data: tagList = [], isLoading } = {},
+    selectedTag,
+    questions: { hasMore } = {}
+  } = state;
 
   const updateSelectedTag = useCallback(
     (tagName: string) => () => {
@@ -30,7 +34,7 @@ const TradingTag: FC = () => {
   }, [tagList, dispatch]);
 
   return (
-    <TradingTagWrap>
+    <TradingTagWrap fixed={!!hasMore}>
       {isLoading ? (
         <LoadingSkeleton />
       ) : (
